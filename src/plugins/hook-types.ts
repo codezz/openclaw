@@ -946,7 +946,7 @@ export type PluginHookBeforeInstallEvent = {
   sourcePathKind: PluginInstallSourcePathKind;
   origin?: string;
   request: PluginHookBeforeInstallRequest;
-  builtinScan: PluginHookBeforeInstallBuiltinScan;
+  builtinScan?: PluginHookBeforeInstallBuiltinScan;
   skill?: PluginHookBeforeInstallSkill;
   plugin?: PluginHookBeforeInstallPlugin;
 };

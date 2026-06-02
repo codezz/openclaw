@@ -1272,6 +1272,7 @@ export async function updateNpmInstalledPlugins(params: {
           record.source === "npm"
             ? await installPluginFromNpmSpec({
                 spec: effectiveSpec!,
+                config: params.config,
                 mode: "update",
                 extensionsDir,
                 timeoutMs: params.timeoutMs,
@@ -1291,6 +1292,7 @@ export async function updateNpmInstalledPlugins(params: {
             : record.source === "clawhub"
               ? await installPluginFromClawHub({
                   spec: effectiveSpec ?? `clawhub:${record.clawhubPackage!}`,
+                  config: params.config,
                   baseUrl: record.clawhubUrl,
                   mode: "update",
                   extensionsDir,
@@ -1303,6 +1305,7 @@ export async function updateNpmInstalledPlugins(params: {
               : record.source === "git"
                 ? await installPluginFromGitSpec({
                     spec: effectiveSpec!,
+                    config: params.config,
                     mode: "update",
                     extensionsDir,
                     timeoutMs: params.timeoutMs,
@@ -1314,6 +1317,7 @@ export async function updateNpmInstalledPlugins(params: {
                 : await installPluginFromMarketplace({
                     marketplace: record.marketplaceSource!,
                     plugin: record.marketplacePlugin!,
+                    config: params.config,
                     mode: "update",
                     extensionsDir,
                     timeoutMs: params.timeoutMs,
@@ -1346,6 +1350,7 @@ export async function updateNpmInstalledPlugins(params: {
         });
         probe = await installPluginFromNpmSpec({
           spec: npmSpecs.fallbackSpec,
+          config: params.config,
           mode: "update",
           extensionsDir,
           timeoutMs: params.timeoutMs,
@@ -1379,6 +1384,7 @@ export async function updateNpmInstalledPlugins(params: {
         );
         probe = await installPluginFromClawHub({
           spec: clawhubSpecs.fallbackSpec,
+          config: params.config,
           baseUrl: record.clawhubUrl,
           mode: "update",
           extensionsDir,
@@ -1410,6 +1416,7 @@ export async function updateNpmInstalledPlugins(params: {
         usedOfficialNpmFallback = true;
         probe = await installPluginFromNpmSpec({
           spec: officialNpmFallbackInstallSpec,
+          config: params.config,
           mode: "update",
           extensionsDir,
           timeoutMs: params.timeoutMs,
@@ -1517,6 +1524,7 @@ export async function updateNpmInstalledPlugins(params: {
         record.source === "npm"
           ? await installNpmSpecForUpdate({
               spec: effectiveSpec!,
+              config: params.config,
               mode: "update",
               extensionsDir,
               timeoutMs: params.timeoutMs,
@@ -1535,6 +1543,7 @@ export async function updateNpmInstalledPlugins(params: {
           : record.source === "clawhub"
             ? await installPluginFromClawHub({
                 spec: effectiveSpec ?? `clawhub:${record.clawhubPackage!}`,
+                config: params.config,
                 baseUrl: record.clawhubUrl,
                 mode: "update",
                 extensionsDir,
@@ -1546,6 +1555,7 @@ export async function updateNpmInstalledPlugins(params: {
             : record.source === "git"
               ? await installPluginFromGitSpec({
                   spec: effectiveSpec!,
+                  config: params.config,
                   mode: "update",
                   extensionsDir,
                   timeoutMs: params.timeoutMs,
@@ -1556,6 +1566,7 @@ export async function updateNpmInstalledPlugins(params: {
               : await installPluginFromMarketplace({
                   marketplace: record.marketplaceSource!,
                   plugin: record.marketplacePlugin!,
+                  config: params.config,
                   mode: "update",
                   extensionsDir,
                   timeoutMs: params.timeoutMs,
@@ -1621,6 +1632,7 @@ export async function updateNpmInstalledPlugins(params: {
       );
       result = await installPluginFromClawHub({
         spec: clawhubSpecs.fallbackSpec,
+        config: params.config,
         baseUrl: record.clawhubUrl,
         mode: "update",
         extensionsDir,
@@ -1653,6 +1665,7 @@ export async function updateNpmInstalledPlugins(params: {
       channelFallbackSuffix = ` (warning: official ClawHub artifact fallback used ${officialNpmFallbackInstallSpec}).`;
       result = await installNpmSpecForUpdate({
         spec: officialNpmFallbackInstallSpec,
+        config: params.config,
         mode: "update",
         extensionsDir,
         timeoutMs: params.timeoutMs,
@@ -1937,6 +1950,7 @@ export async function syncPluginsForUpdateChannel(params: {
       if (preferredSource === "clawhub") {
         result = await installPluginFromClawHub({
           spec: clawhubSpec,
+          config: params.config,
           ...(bridge.clawhubUrl ? { baseUrl: bridge.clawhubUrl } : {}),
           mode: "update",
           expectedPluginId: targetPluginId,
@@ -1950,6 +1964,7 @@ export async function syncPluginsForUpdateChannel(params: {
           installSpec = npmSpec;
           result = await installPluginFromNpmSpec({
             spec: npmSpec,
+            config: params.config,
             mode: "update",
             expectedPluginId: targetPluginId,
             trustedSourceLinkedOfficialInstall,
@@ -1959,6 +1974,7 @@ export async function syncPluginsForUpdateChannel(params: {
       } else {
         result = await installPluginFromNpmSpec({
           spec: npmSpec,
+          config: params.config,
           mode: "update",
           expectedPluginId: targetPluginId,
           trustedSourceLinkedOfficialInstall,
