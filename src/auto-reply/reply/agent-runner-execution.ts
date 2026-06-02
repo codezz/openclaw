@@ -2256,6 +2256,10 @@ export async function runAgentTurnWithFallback(params: {
                 : undefined);
             return (async () => {
               let attemptCompactionCount = 0;
+              const suppressToolErrorDetails =
+                params.resolvedVerboseLevel === "full"
+                  ? false
+                  : params.opts?.suppressToolErrorDetails;
               const lifecycleBackstop = createEmbeddedLifecycleTerminalBackstop({
                 runId,
                 sessionKey: params.sessionKey,
@@ -2318,6 +2322,7 @@ export async function runAgentTurnWithFallback(params: {
                     suppressToolErrorWarnings:
                       params.opts?.shouldSuppressToolErrorWarnings ??
                       params.opts?.suppressToolErrorWarnings,
+                    suppressToolErrorDetails,
                     disableTools: params.opts?.disableTools,
                     enableHeartbeatTool: params.opts?.enableHeartbeatTool,
                     forceHeartbeatTool: params.opts?.forceHeartbeatTool,
