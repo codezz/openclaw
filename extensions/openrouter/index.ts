@@ -240,6 +240,17 @@ function resolveOpenRouterFusionPromptContribution(
   return lines.length > 2 ? { dynamicSuffix: lines.join("\n") } : undefined;
 }
 
+/** OpenAI GPT-5.6+ routed through OpenRouter (`openai/gpt-6-sol`, `openai/gpt-5.6-luna`). */
+function isOpenRouterMessageEndCachedOpenAIModelId(modelId: string | undefined): boolean {
+  // Same version rule as OpenAI's GPT-5.6+ prompt-cache lifetime handling.
+  const version = /^(?:openrouter\/)?openai\/gpt-(\d+)(?:\.(\d+))?(?:-|$)/i.exec(modelId ?? "");
+  if (!version) {
+    return false;
+  }
+  const major = Number(version[1]);
+  return major > 5 || (major === 5 && Number(version[2] ?? 0) >= 6);
+}
+
 export default defineSingleProviderPluginEntry({
   id: "openrouter",
   name: "OpenRouter Provider",
@@ -373,6 +384,11 @@ export default defineSingleProviderPluginEntry({
         // Mistral requires 9-character base62 tool-call ids even through OpenRouter (#58012).
         ...(isOpenRouterMistralModelId(modelId)
           ? { sanitizeToolCallIds: true, toolCallIdMode: "strict9" as const }
+          : {}),
+        // GPT-5.6+ cache at message-end breakpoints: a runtime-context carrier that moves
+        // to the end of every request re-bills the whole conversation on each call (#158898).
+        ...(isOpenRouterMessageEndCachedOpenAIModelId(modelId)
+          ? { appendOnlyRuntimeContext: true }
           : {}),
       }),
       normalizeToolSchemas: normalizeOpenRouterToolSchemas,
