@@ -21,6 +21,7 @@ import type {
 
 export { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
 export {
+  isOpenAIMessageEndCachedModelId,
   normalizeAntigravityPreviewModelId,
   normalizeGooglePreviewModelId,
 } from "@openclaw/model-catalog-core/provider-model-id-normalize";

@@ -22,6 +22,7 @@ import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
 import { buildOpenRouterImageGenerationProvider } from "./image-generation-provider.js";
 import { openrouterMediaUnderstandingProvider } from "./media-understanding-provider.js";
 import {
+  isOpenRouterMessageEndCachedOpenAIModelId,
   isOpenRouterMistralModelId,
   normalizeOpenRouterApiModelId,
   normalizeOpenRouterModelFamilyId,
@@ -238,17 +239,6 @@ function resolveOpenRouterFusionPromptContribution(
   ].filter((line): line is string => Boolean(line));
 
   return lines.length > 2 ? { dynamicSuffix: lines.join("\n") } : undefined;
-}
-
-/** OpenAI GPT-5.6+ routed through OpenRouter (`openai/gpt-6-sol`, `openai/gpt-5.6-luna`). */
-function isOpenRouterMessageEndCachedOpenAIModelId(modelId: string | undefined): boolean {
-  // Same version rule as OpenAI's GPT-5.6+ prompt-cache lifetime handling.
-  const version = /^(?:openrouter\/)?openai\/gpt-(\d+)(?:\.(\d+))?(?:-|$)/i.exec(modelId ?? "");
-  if (!version) {
-    return false;
-  }
-  const major = Number(version[1]);
-  return major > 5 || (major === 5 && Number(version[2] ?? 0) >= 6);
 }
 
 export default defineSingleProviderPluginEntry({
