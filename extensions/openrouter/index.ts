@@ -40,7 +40,11 @@ import { truncateUtf16Safe } from "openclaw/plugin-sdk/text-utility-runtime";
 import { buildOpenRouterDecisionProvider, isOpenRouterDecisionModel } from "./decision-provider.js";
 import { buildOpenRouterImageGenerationProvider } from "./image-generation-provider.js";
 import { openrouterMediaUnderstandingProvider } from "./media-understanding-provider.js";
-import { isOpenRouterMistralModelId, normalizeOpenRouterApiModelId } from "./models.js";
+import {
+  isOpenRouterMessageEndCachedOpenAIModelId,
+  isOpenRouterMistralModelId,
+  normalizeOpenRouterApiModelId,
+} from "./models.js";
 import { buildOpenRouterMusicGenerationProvider } from "./music-generation-provider.js";
 import { createOpenRouterOAuthAuthMethod } from "./oauth.js";
 import { applyOpenrouterConfig, OPENROUTER_DEFAULT_MODEL_REF } from "./onboard.js";
@@ -473,6 +477,11 @@ export default defineSingleProviderPluginEntry({
         // Mistral requires 9-character base62 tool-call ids even through OpenRouter (#58012).
         ...(isOpenRouterMistralModelId(modelId)
           ? { sanitizeToolCallIds: true, toolCallIdMode: "strict9" as const }
+          : {}),
+        // GPT-5.6+ cache at message-end breakpoints: a runtime-context carrier that moves
+        // to the end of every request re-bills the whole conversation on each call (#158898).
+        ...(isOpenRouterMessageEndCachedOpenAIModelId(modelId)
+          ? { appendOnlyRuntimeContext: true }
           : {}),
       }),
       normalizeToolSchemas: (ctx) =>
